@@ -67,14 +67,14 @@ const conditionDataset: Condition[] = [
   {
     name: 'Уушгины үрэвсэл',
     symptoms: ['Амьсгал давчдах', 'Ханиалгах', 'Халуун хүчтэй хөлрөх'],
-    keywords: ['ушиг', 'амьсгал', 'харшил', 'үрэвсэл'],
+    keywords: ['уушиг', 'амьсгал', 'харшил', 'үрэвсэл'],
     advice: 'Нарийн агаарт амьсгалаад, амрах хэрэгтэй. Амьсгал давчдах бол яаралтай эмчид ханд.'
   },
   {
     name: 'Бронхит',
     symptoms: ['Ханиалгах', 'Амьсгал давчдах', 'Нус гоожих'],
     keywords: ['бронхит', 'ханиалгах', 'хар', 'амьсгал'],
-    advice: 'Чийглэг орчинд амарх, шингэн ихээр уух. Хэрвээ ханиалга удаан үргэлжилбэл эмчид ханд.'
+    advice: 'Чийглэг орчинд амрах, шингэн ихээр уух. Хэрвээ ханиалга удаан үргэлжилбэл эмчид ханд.'
   },
   {
     name: 'Хоолойн үрэвсэл',
@@ -133,7 +133,7 @@ const conditionDataset: Condition[] = [
   {
     name: 'Арьсны тууралт',
     symptoms: ['Арьсны тууралт', 'Халуун хүчтэй хөлрөх', 'Улайх'],
-    keywords: ['арьс', 'туралт', 'улайх', 'хавдах'],
+    keywords: ['тууралт'],
     advice: 'Арьсыг цэвэр байлгаж, загатнал гарвал эмчид ханда.'
   },
   {
@@ -205,7 +205,7 @@ const conditionDataset: Condition[] = [
   {
     name: 'Хэвлийн үрэвсэл',
     symptoms: ['Хэвлийдээ шөрмөс татах', 'Гэдэс өвдөх', 'Суулгах'],
-    keywords: ['хэвэл', 'үрэвсэл', 'шөрмөс', 'чангарах'],
+    keywords: ['хэвлий', 'үрэвсэл', 'шөрмөс', 'чангарах'],
     advice: 'Амарч, хөнгөн хоол иднэ. Хэрвээ өвдөлт тэсэхийн аргагүй бол эмчид ханд.'
   },
   {
@@ -356,13 +356,13 @@ const conditionDataset: Condition[] = [
     name: 'Гэмтлийн дараах өвчин',
     symptoms: ['Гэмтэл шарх', 'Хөлний өвчин', 'Мэдээ алдалт'],
     keywords: ['гэмтэл', 'шарх', 'сэрвэг', 'мэдрэх'],
-    advice: 'Шархыг цэвэр байлгаж, эмчийн заавраар арчилна. Хэрвэ өвдөлт нэмэгдвэл мэргэжлийн тусламж ав.'
+    advice: 'Шархыг цэвэр байлгаж, эмчийн заавраар арчилна. Хэрвээ өвдөлт нэмэгдвэл мэргэжлийн тусламж ав.'
   },
   {
     name: 'Судсан үрэвсэл',
     symptoms: ['Толгой өвдөх', 'Зүрх цохилох түргэсэх', 'Нүд улайх'],
     keywords: ['судал', 'үрэвсэл', 'цус', 'даралт'],
-    advice: 'Эмчид үзүүлж, цусны шинжилгээ хийлгэнэ. Хэрвээ амьсгал давчдах бол шууд хүс.'
+    advice: 'Эмчид үзүүлж, цусны шинжилгээ хийлгэнэ. Хэрвээ амьсгал давчдах бол шууд ханд.'
   },
   {
     name: 'Хэрвээшилт',
@@ -418,7 +418,7 @@ export default function Home() {
   const [selectedSymptoms, setSelectedSymptoms] = useState<string[]>([]);
   const [duration, setDuration] = useState<number | ''>('');
   const [description, setDescription] = useState('');
-  const [resultCount, setResultCount] = useState(5);
+  const [resultCount, setResultCount] = useState(3);
   const [sensitivity, setSensitivity] = useState(1);
   const [results, setResults] = useState<Diagnosis[]>([]);
 
@@ -449,11 +449,11 @@ export default function Home() {
       sensitivity
     );
 
-    const top = diagnosisScores.slice(0, Math.max(3, Math.min(8, resultCount)));
-    const total = top.reduce((sum, item) => sum + item.score, 0) || 1;
+    const top = diagnosisScores.slice(0, Math.max(1, Math.min(3, resultCount)));
+    const maxScore = top[0]?.score || 1;
 
     const computed = top.map((item, index) => {
-      const confidence = Math.max(5, Math.round((item.score / total) * 100));
+      const confidence = Math.max(5, Math.round((item.score / maxScore) * 100));
       return {
         rank: index + 1,
         name: item.name,
@@ -594,7 +594,7 @@ export default function Home() {
             <div>
               <label>Үр дүнгийн тоо</label>
               <select value={resultCount} onChange={(e) => setResultCount(Number(e.target.value))}>
-                {[3, 4, 5, 6, 7, 8].map((value) => (
+                {[1, 2, 3].map((value) => (
                   <option key={value} value={value}>
                     {value}
                   </option>
