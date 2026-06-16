@@ -44,7 +44,9 @@ function getSettings(){
 function getConfidenceByRank(rank, total){
   if(total === 1) return 100;
   if(total === 2) return rank === 1 ? 60 : 40;
-  if(total === 3) return [60, 25, 15][rank - 1];
+  if(rank === 1) return 60;
+  if(rank === 2) return 25;
+  if(rank === 3) return 15;
   return null;
 }
 
@@ -100,17 +102,16 @@ function simulateDiagnosis(data){
     score += Math.min(data.durationVal, 12) * 2;
     if(data.age >= 50 && /астма|хоолойн|арьсны|гэс|бөөлж/i.test(item.name)) score += 5;
     if(data.gender === 'female' && /арьсны|сэтгэл/i.test(item.name)) score += 4;
-    return {...item, score: score * settings.sensitivity};
+    return {...item, score};
   });
 
   scored.sort((a,b)=>b.score-a.score);
-  const topN = scored.slice(0, Math.max(3, Math.min(8, settings.count)));
+  const topN = scored.slice(0, Math.min(8, settings.count));
 
-  const sum = topN.reduce((acc, v)=>acc + v.score, 0) || 1;
   let results = topN.map((s,i)=>({
     rank: i+1,
     condition: s.name,
-    confidence: getConfidenceByRank(i+1, topN.length) ?? Math.max(5, Math.round((s.score / sum) * 100))
+    confidence: getConfidenceByRank(i+1, topN.length) ?? Math.max(5, Math.round((s.score / topN[0].score) * 100))
   }));
 
   // Adjust rounding so total is at most 100

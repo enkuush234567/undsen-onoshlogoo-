@@ -414,7 +414,9 @@ const scoreDiagnosis = (
 const getConfidenceByRank = (rank: number, total: number): number | null => {
   if (total === 1) return 100;
   if (total === 2) return rank === 1 ? 60 : 40;
-  if (total === 3) return [60, 25, 15][rank - 1];
+  if (rank === 1) return 60;
+  if (rank === 2) return 25;
+  if (rank === 3) return 15;
   return null;
 };
 
