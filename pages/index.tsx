@@ -411,6 +411,13 @@ const scoreDiagnosis = (
   return scored;
 };
 
+const getConfidenceByRank = (rank: number, total: number): number | null => {
+  if (total === 1) return 100;
+  if (total === 2) return rank === 1 ? 60 : 40;
+  if (total === 3) return [60, 25, 15][rank - 1];
+  return null;
+};
+
 export default function Home() {
   const [age, setAge] = useState<number | ''>('');
   const [gender, setGender] = useState<Gender>('male');
@@ -453,7 +460,8 @@ export default function Home() {
     const maxScore = top[0]?.score || 1;
 
     const computed = top.map((item, index) => {
-      const confidence = Math.max(5, Math.round((item.score / maxScore) * 100));
+      const fixedConfidence = getConfidenceByRank(index + 1, top.length);
+      const confidence = fixedConfidence ?? Math.max(5, Math.round((item.score / maxScore) * 100));
       return {
         rank: index + 1,
         name: item.name,

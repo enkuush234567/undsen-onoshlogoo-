@@ -41,6 +41,13 @@ function getSettings(){
   };
 }
 
+function getConfidenceByRank(rank, total){
+  if(total === 1) return 100;
+  if(total === 2) return rank === 1 ? 60 : 40;
+  if(total === 3) return [60, 25, 15][rank - 1];
+  return null;
+}
+
 function updateAIModeLabel(){
   const hint = document.querySelector('.analyze-wrap .hint');
   if(!hint) return;
@@ -103,7 +110,7 @@ function simulateDiagnosis(data){
   let results = topN.map((s,i)=>({
     rank: i+1,
     condition: s.name,
-    confidence: Math.max(5, Math.round((s.score / sum) * 100))
+    confidence: getConfidenceByRank(i+1, topN.length) ?? Math.max(5, Math.round((s.score / sum) * 100))
   }));
 
   // Adjust rounding so total is at most 100
